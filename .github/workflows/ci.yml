@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  skills:
+    name: Check skill frontmatter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Every SKILL.md has a matching name, a description, and fewer than 150 lines
+        run: |
+          rc=0
+          for f in skills/*/SKILL.md; do
+            dir=$(basename "$(dirname "$f")")
+            frontmatter() { awk '/^---$/{n++; next} n==1' "$f"; }
+            name=$(frontmatter | sed -n 's/^name:[[:space:]]*//p' | head -1)
+            lines=$(wc -l < "$f")
+            [ "$(head -1 "$f")" = "---" ] || { echo "::error file=$f::missing frontmatter"; rc=1; }
+            [ "$name" = "$dir" ] || { echo "::error file=$f::name '$name' doesn't match folder '$dir'"; rc=1; }
+            frontmatter | grep -q '^description:' || { echo "::error file=$f::missing description"; rc=1; }
+            [ "$lines" -lt 150 ] || { echo "::error file=$f::$lines lines, limit is 149"; rc=1; }
+          done
+          exit $rc
+
+  links:
+    name: Check Markdown links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check links in every Markdown file
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --exclude 'localhost' --exclude-path '.git' './**/*.md'
+          fail: true
