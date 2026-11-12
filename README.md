@@ -1,29 +1,28 @@
-# skills
+# Test Engineering Skills
 
-## What is a skill?
+Reusable instruction sets for Claude that encode how I build and run test tooling. A skill is a folder of instructions, templates and (occasionally) a script that Claude loads when a request matches its `description` in `SKILL.md`.
 
-A skill is a packaged set of instructions Claude Code can invoke to perform specialized tasks like scaffolding projects, running reviews, or following repo-specific workflows. Skills are loaded via the `Skill` tool and give Claude detailed guidance for particular kinds of work.
+## Skills
 
-## What this builds
+| Skill | What it does | Example |
+|---|---|---|
+| [scaffolding-restassured-api-tests](skills/scaffolding-restassured-api-tests) | Scaffolds and grows a Java API test suite: tag-based suites, failure-only logging, run summaries, CI | [`api-tests/` in project-manager](https://github.com/mchlwall/project-manager/tree/main/api-tests) |
+| [regression-analyzer](skills/regression-analyzer) | Turns a branch diff into risk-weighted manual test cases and the smallest set of suites to run | [examples/regression-analyzer](examples/regression-analyzer) |
+| [test-plan-generator](skills/test-plan-generator) | Writes a regression or new-feature test plan from docs, a brief or a spec | [examples/test-plan-generator](examples/test-plan-generator) |
+| [test-report-generator](skills/test-report-generator) | Summarises an executed test plan into a verdict, pass rate and per-area counts (script-counted) | [examples/test-report-generator](examples/test-report-generator) |
 
-This repository contains reusable scaffolding skills for Claude Code. Currently it includes `scaffolding-restassured-api-tests`, which scaffolds a complete Java API test framework using RestAssured, JUnit 5, Gradle, and Lombok for testing project management/task tracker APIs.
+## Installing
 
-**Generated repository:** [project-tracker-api-tests](https://github.com/mwall/project-tracker-api-tests)
+Copy a skill folder into your Claude skills directory (for example `~/.claude/skills/`), or clone this repository and add its `skills/` folder as a skills source in your Claude configuration. Invoke a skill by name (for example `/test-plan-generator`) or just describe the task; Claude picks the skill whose description matches.
 
-## Installing in Claude
+## How these are built
 
-1. Clone this repository to your local machine
-2. Add it to your Claude Code project settings in `.claude/settings.json`:
+Each skill starts from conventions proven in real test work, written up as instructions with templates, then run against a real repository. Every skill links to its output above so it can be judged by what it produces. Each example folder shows the input, any edits made to the raw output, and how to reproduce it.
 
-```json
-{
-  "skills": [
-    "/Users/mwall/Github/skills/skills"
-  ]
-}
-```
+## Contributing
 
-3. The skills will be available in any Claude Code conversation in that project
-4. For global availability across all projects, add the path to `~/.claude/settings.json` instead
+Issues and pull requests are welcome, particularly reports of a skill producing something that didn't match its description.
 
-Once installed, invoke with: `/scaffolding-restassured-api-tests` or by mentioning "RestAssured API tests" or "project management API tests" in your prompt.
+## Licence
+
+MIT
